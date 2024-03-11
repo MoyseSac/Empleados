@@ -5,6 +5,7 @@ using System.Data;
 using System.Drawing;
 using System.IO;
 using System.Linq;
+using System.Reflection.Emit;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -15,7 +16,7 @@ namespace Empleados
     {
         List<empleado> empleados = new List <empleado>();
         List<Asistencia> asistencias = new List<Asistencia>();
-        List<Reportes> reporte = new List<Reportes>();
+        List<Reportes> reportes = new List<Reportes>();
 
         public Form1()
         {
@@ -24,7 +25,13 @@ namespace Empleados
 
         private void Form1_Load(object sender, EventArgs e)
         {
-           
+            cargar_Asistencia();
+            cargar_Empleado();
+            desplegable.DisplayMember = "Nombre";
+            desplegable.ValueMember = "NoEmpleado";
+            desplegable.DataSource = empleados;
+            label1.Visible = false;
+            label2.Visible = false;
 
         }
 
@@ -89,15 +96,6 @@ namespace Empleados
             dataGridViewEmpleado.DataSource = empleados;
             dataGridViewEmpleado.Refresh();
         }
-        private void buttonleer_Click(object sender, EventArgs e)
-        {
-            cargar_Empleado();
-            Mostrar_Empleados();
-            cargar_Asistencia();
-            Mostrar_Asistencia();
-
-        }
-
 
 
 
@@ -108,8 +106,6 @@ namespace Empleados
 
         private void button_Sueldo_Click(object sender, EventArgs e)
         {
-            List<Reportes> reportes = new List<Reportes>();
-
 
             foreach (empleado Empleado in empleados)
             {
@@ -136,10 +132,30 @@ namespace Empleados
 
         private void button2_Click(object sender, EventArgs e)
         {
-            cargar_Asistencia();
-            cargar_Empleado();
-            Mostrar_Empleados();
-            Mostrar_Asistencia();
+          
+           Mostrar_Empleados();
+           Mostrar_Asistencia();
+
+
+        }
+
+        private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            int noEmpleado = Convert.ToInt32(desplegable.SelectedValue);
+
+            empleado empleadoEncontrado = empleados.Find(c => c.NoEmpleado == noEmpleado);
+           Asistencia asistenciaEncontrada = asistencias.Find(c => c.NoEmpleado == noEmpleado);
+
+            decimal sueldo = empleadoEncontrado.SueldoHora * asistenciaEncontrada.HorasMes;
+            label1.Visible = true;
+            label2.Visible = true;
+            label1.Text = empleadoEncontrado.Nombre;
+            label2.Text = sueldo.ToString();
+        }
+
+        private void dataGridViewAsistencia_CellContentClick(object sender, DataGridViewCellEventArgs e)
+        {
+
         }
     }
 
